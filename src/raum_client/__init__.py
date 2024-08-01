@@ -521,38 +521,38 @@ class Client:
     
     
     # -------------------------------- Product Dependency --------------------------------
-def create_product_dependency(self,
-                              product,
-                              path_list
-                              ):
-    """
-    Creates a new product dependency in the system.
+    def create_product_dependency(self,
+                                product,
+                                path_list
+                                ):
+        """
+        Creates a new product dependency in the system.
 
-    Parameters:
-    product (dict): A dictionary representing the product to which the dependency belongs.
-    path_list (list): A list of strings representing the file paths of the dependent products.
+        Parameters:
+        product (dict): A dictionary representing the product to which the dependency belongs.
+        path_list (list): A list of strings representing the file paths of the dependent products.
 
-    Returns:
-    dict: A dictionary representing the newly created product dependency.
-    """
-    payload = {
-        'product': product['id'],
-        'dependencies': path_list
-    }
-    url = f"{self.base_url}/product-dependency"
-    response = self._post(url, payload)
-    return response.json()
+        Returns:
+        dict: A dictionary representing the newly created product dependency.
+        """
+        payload = {
+            'product': product['id'],
+            'dependencies': path_list
+        }
+        url = f"{self.base_url}/product-dependency"
+        response = self._post(url, payload)
+        return response.json()
 
-def get_product_dependency(self, product):
-    """
-    Retrieves the product dependencies for a given product.
+    def get_product_dependency(self, product):
+        """
+        Retrieves the product dependencies for a given product.
 
-    Parameters:
-    product (dict): A dictionary representing the product for which the dependencies are retrieved.
+        Parameters:
+        product (dict): A dictionary representing the product for which the dependencies are retrieved.
 
-    Returns:
-    list: A list of dictionaries, each representing a product dependency.
-    """
-    url = f"{self.base_url}/product/{product['id']}"
-    response = self._get(url)
-    return response.json()['items']
+        Returns:
+        list: A list of dictionaries, each representing a product dependency.
+        """
+        url = f"{self.base_url}/product/{product['id']}"
+        response = self._get(url)
+        return response.json()['items']
