@@ -138,8 +138,25 @@ class Client:
         response = self.session.post(url, json=payload)
         return response.json()
     
+    def get_users(self, filters=None):
+        """
+        Retrieves a list of users based on the provided filters.
+
+        Parameters:
+        filters (dict, optional): A dictionary of filters to apply to the user retrieval. 
+        Defaults to None, which retrieves all users.
+
+        Returns:
+        list: A list of dictionaries, each representing a user. If no users are found, 
+        it returns an empty list.
+        """
+        url = f"{self.base_url}/get-users"
+        response = self._get(url, filters)
+        return response.json()['items']
+    
     # -------------------------------- Core --------------------------------
 
+    
     def get_container_types(self, filters=None):
         """
         Retrieves a list of container types based on the provided filters.

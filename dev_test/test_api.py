@@ -8,6 +8,7 @@ from raum_client import Client
 
 
 con = Client()
+print(con.get_users(filters={'id': 9}))
 
 # -------------------------------------------- User Auth --------------------------------------------
 # print('Register User')
@@ -35,10 +36,10 @@ con = Client()
 # con.create_container(projects[0], char_container_type[0], 'simba_kid_dirt', 'SimbaKidDirt',frame_range={'cut_in':'1001', 'cut_out':'1100'})
 # con.create_container(projects[0], char_container_type[0], 'simba_kid_dirt2', 'SimbaKidDirt2',frame_range={'cut_in':'1001', 'cut_out':'1100'})
 
-container = con.get_containers(filters={
-    'code':'simba_kid',
-    'project__code':'lkg'
-})
+# container = con.get_containers(filters={
+#     'code':'simba_kid',
+#     'project__code':'lkg'
+# })
 # print(container)
 # updated_container = container[0].copy()
 # updated_container['client_name'] = 'updated_client_name'
@@ -112,45 +113,45 @@ container = con.get_containers(filters={
 # con.update_product(updated_prod)
 
 # -------------------------------------------- Product  Look --------------------------------------------
-look_elem = con.get_elements(filters={'code': 'look'})[0]
-mat_dt = con.get_data_types(filters={'code': 'mat'})[0]
-sfc_step = con.get_steps(filters={'code': 'sfc'})[0]
-look_prod = con.create_product(
-                    container[0],
-                    sfc_step,
-                    look_elem,
-                    mat_dt,
-                    '500',
-                    'default',
-                    task='model',
-                    extension='usd',
-)
-version_num = look_prod.get('version')
-updated_path = f'F:/myprpoject/fdsf/dfsdf/df/{random.randint(0, 1000)}/myfile_{version_num}.usd'
-updated_prod = look_prod.copy()
-updated_prod['filepath'] = updated_path
-con.update_product(updated_prod)
+# look_elem = con.get_elements(filters={'code': 'look'})[0]
+# mat_dt = con.get_data_types(filters={'code': 'mat'})[0]
+# sfc_step = con.get_steps(filters={'code': 'sfc'})[0]
+# look_prod = con.create_product(
+#                     container[0],
+#                     sfc_step,
+#                     look_elem,
+#                     mat_dt,
+#                     '500',
+#                     'default',
+#                     task='model',
+#                     extension='usd',
+# )
+# version_num = look_prod.get('version')
+# updated_path = f'F:/myprpoject/fdsf/dfsdf/df/{random.randint(0, 1000)}/myfile_{version_num}.usd'
+# updated_prod = look_prod.copy()
+# updated_prod['filepath'] = updated_path
+# con.update_product(updated_prod)
 
-look_product = con.get_products(filters={
-    'container__project__code': 'lkg',
-    'container__code': 'simba_kid',
-    'element__code': 'look',
-    'version': version_num
-})[0]
-print(look_product)
+# look_product = con.get_products(filters={
+#     'container__project__code': 'lkg',
+#     'container__code': 'simba_kid',
+#     'element__code': 'look',
+#     'version': version_num
+# })[0]
+# print(look_product)
 
-model_product = con.get_products(filters={
-    'container__project__code': 'lkg',
-    'container__code': 'simba_kid',
-    'element__code': 'model',
-    'version':3
-})[0]
-texture_product = con.get_products(filters={
-    'container__project__code': 'lkg',
-    'container__code': 'simba_kid',
-    'element__code': 'texture',
-    'version': 2
-})[0]
-print(look_product)
-con.create_product_dependency(look_product, [model_product['filepath'], texture_product['filepath']])
-# con.set_status(new_prod, 'appr')
+# model_product = con.get_products(filters={
+#     'container__project__code': 'lkg',
+#     'container__code': 'simba_kid',
+#     'element__code': 'model',
+#     'version':3
+# })[0]
+# texture_product = con.get_products(filters={
+#     'container__project__code': 'lkg',
+#     'container__code': 'simba_kid',
+#     'element__code': 'texture',
+#     'version': 2
+# })[0]
+# print(look_product)
+# con.create_product_dependency(look_product, [model_product['filepath'], texture_product['filepath']])
+# # con.set_status(new_prod, 'appr')
