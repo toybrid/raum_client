@@ -17,7 +17,6 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE TEXT OR THE USE OR OTHER DEALINGS
 '''
 import requests
 import os
-from pprint import pprint
 from raum_client import utils
 import getpass
 
@@ -253,6 +252,22 @@ class Client:
         response = self._get(url, filters)
         return response.json()['items']
     
+    def get_bundle_types(self, filters=None):
+        """
+        Retrieves a list of bundle types based on the provided filters.
+
+        Parameters:
+        filters (dict, optional): A dictionary of filters to apply to the bundle type 
+        retrieval. Defaults to None, which retrieves all bundle types.
+
+        Returns:
+        list: A list of dictionaries, each representing a bundle type. If no bundle 
+        types are found, it returns an empty list.
+        """
+        url = f"{self.base_url}/bundle-type"
+        response = self._get(url, filters)
+        return response.json()['items']
+    
     # -------------------------------- Project --------------------------------
 
     def create_project(self, code, label, client_name):
@@ -414,7 +429,12 @@ class Client:
         dict: A dictionary representing the updated container relation.
         """
         url = f"{self.base_url}/container-relation/{payload['id']}"
-        response = self._patch(url, payload)
+        payload_dict = {}
+        payload_dict['id'] = payload['id']
+        payload_dict['from_container_id'] = payload['from_container']['id']
+        payload_dict['relation_type_id'] = payload['relation_type']['id']
+        payload_dict['to_containers'] =[ x['id'] for x in payload['to_containers']]
+        response = self._patch(url, payload_dict)
         return response.json()
 
     def get_container_relation(self, container, relation):
@@ -486,7 +506,6 @@ class Client:
             payload['version'] = version
         if filepath is not None:
             payload['filepath'] = filepath
-        # print(payload)
         response = self._post(url, payload)
         return response.json()
         
@@ -570,6 +589,36 @@ class Client:
         Returns:
         list: A list of dictionaries, each representing a product dependency.
         """
-        url = f"{self.base_url}/product/{product['id']}"
+        url = f"{self.base_url}/product-dependency/{product['id']}"
         response = self._get(url)
+        return response.json()
+    
+    # -------------------------------- Product Dependency --------------------------------
+
+    def create_bundle(self, container, bundle_type, products, version=None):
+        url = f"{self.base_url}/bundle"
+        payload = {
+            'container_id': container['id'],
+            'bundle_type_id': bundle_type['id'],
+            'products': [i['id'] for i in products]
+            }
+        if version is not None:
+            payload['version'] = version
+
+        response = self._post(url, payload)
+        return response.json()
+
+    def update_bundle(self, payload):
+        url = f"{self.base_url}/bundle/{payload['id']}"
+        payload_dict = {}
+        payload_dict['id'] = payload['id']
+        payload_dict['container_id'] = payload['container']
+        payload_dict['bundle_type_id'] = payload['bundle_type']
+        payload_dict['products'] = [i['id'] for i in payload['products']]
+        response = self._patch(url, payload_dict)
+        return response.json()
+
+    def get_bundles(self, filters=None):
+        url = f"{self.base_url}/bundle"
+        response = self._get(url, filters)
         return response.json()['items']

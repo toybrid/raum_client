@@ -112,7 +112,7 @@ biped_sim = con.get_containers(filters={
 container_relation_obj = con.get_container_relation(container[0], child_relation[0])
 
 updated_container_relation = container_relation_obj[0].copy()
-updated_container_relation['to_containers'].append(biped_sim['id'])
+updated_container_relation['to_containers'].append(biped_sim)
 con.update_container_relation(updated_container_relation)
 ```
 ## Products
@@ -181,6 +181,15 @@ updated_prod = look_prod.copy()
 updated_prod['filepath'] = updated_path
 con.update_product(updated_prod)
 ```
+### Get Prooduct
+```python
+look_products = con.get_products(filters={
+    'container__project__code': 'lkg',
+    'container__code': 'simba_kid',
+    'element__code': 'look',
+})
+print(look_products)
+```
 ## Product Dependency
 ```python
 look_product = con.get_products(filters={
@@ -206,6 +215,48 @@ texture_product = con.get_products(filters={
 print(look_product)
 con.create_product_dependency(look_product, [model_product['filepath'], texture_product['filepath']])
 ```
+## Bundle
+### Create Bundle
+```python
+ctr_simba = con.get_containers(filters={
+    'code':'simba_kid',
+    'project__code':'lkg'
+})[0]
+
+bundle_type = con.get_bundle_types(filters={'code': 'test'})[0]
+
+model_product = con.get_products(filters={
+    'container__project__code': 'lkg',
+    'container__code': 'simba_kid',
+    'element__code': 'model',
+    'version':3
+})[0]
+
+texture_product = con.get_products(filters={
+    'container__project__code': 'lkg',
+    'container__code': 'simba_kid',
+    'element__code': 'texture',
+    'version': 2
+})[0]
+
+bundle_obj = con.create_bundle(ctr_simba, bundle_type, [model_product, texture_product])
+```
+### Update Bundle
+```python
+texture_product_v1 = con.get_products(filters={
+    'container__project__code': 'lkg',
+    'container__code': 'simba_kid',
+    'element__code': 'texture',
+    'version': 4
+})[0]
+bundle_obj['products'].append(texture_product_v1)
+```
+### Get Bundle
+```python
+all_bundles = con.get_bundles()
+pprint(all_bundles)
+```
+
 # Filters Keywords
 | Filter    | Description |
 | -------- | ------- |
