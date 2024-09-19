@@ -466,7 +466,7 @@ class Client:
                        filepath=None,
                        task='',
                        extension='',
-                       meatadata={}):
+                       metadata={}):
         """
         Creates a new product in the system.
 
@@ -483,7 +483,7 @@ class Client:
         filepath (str, optional): The file path of the product. Defaults to None.
         task (str, optional): The task of the product. Defaults to an empty string.
         extension (str, optional): The extension of the product. Defaults to an empty string.
-        meatadata (dict, optional): A dictionary representing the metadata of the product. 
+        metadata (dict, optional): A dictionary representing the metadata of the product. 
         Defaults to an empty dictionary.
 
         Returns:
@@ -500,7 +500,7 @@ class Client:
             'frame_range': frame_range,
             'task': task,
             'extension': extension,
-            'meatadata': meatadata
+            'metadata': metadata
             }
         if version is not None:
             payload['version'] = version
