@@ -29,32 +29,32 @@ updated_project['label'] = 'arjun updated'
 # con.update_project(updated_project)
 
 # # # # -------------------------------------------- Container --------------------------------------------
-char_container_type = con.get_container_types(filters={'code':'chr'})
+# char_container_type = con.get_container_types(filters={'code':'chr'})
 # print(projects)
 # print(char_container_type)
 # con.create_container(projects[0], char_container_type[0], 'simba_kid', 'SimbaKid',frame_range={'cut_in':'1001', 'cut_out':'1100'})
 # con.create_container(projects[0], char_container_type[0], 'simba_kid_dirt', 'SimbaKidDirt',frame_range={'cut_in':'1001', 'cut_out':'1100'})
 # con.create_container(projects[0], char_container_type[0], 'simba_kid_dirt2', 'SimbaKidDirt2',frame_range={'cut_in':'1001', 'cut_out':'1100'})
 
-container = con.get_containers(filters={
-    'code':'simba_kid',
-    'project__code':'lkg'
-})
-print(container)
-updated_container = container[0].copy()
-updated_container['client_name'] = 'updated_client_name'
+# container = con.get_containers(filters={
+#     'code':'simba_kid',
+#     'project__code':'lkg'
+# })
+# print(container)
+# updated_container = container[0].copy()
+# updated_container['client_name'] = 'updated_client_name'
 # con.update_container(updated_container)
 
 # # # # -------------------------------------------- Container Relations --------------------------------------------
-simb_vars = con.get_containers(filters={
-    'code__contains': 'simba_kid_',
-    'project__code':'lkg'
-})
-pprint(simb_vars)
-child_relation = con.get_relation_types(filters={
-    'code': 'chld'
-})
-pprint(child_relation)
+# simb_vars = con.get_containers(filters={
+#     'code__contains': 'simba_kid_',
+#     'project__code':'lkg'
+# })
+# pprint(simb_vars)
+# child_relation = con.get_relation_types(filters={
+#     'code': 'chld'
+# })
+# pprint(child_relation)
 
 # container_relation_obj = con.create_container_relation(
 #     container=container[0],
@@ -62,15 +62,15 @@ pprint(child_relation)
 #     container_list = simb_vars
 #     )
 # con.create_container(projects[0], char_container_type[0], 'simba_kid_biped', 'SimbaKidBiped',frame_range={'cut_in':'1001', 'cut_out':'1100'})
-biped_sim = con.get_containers(filters={
-    'project__code': 'lkg',
-    'code':'simba_kid_biped'
-})[0]
-print(biped_sim)
-container_relation_obj = con.get_container_relation(container[0], child_relation[0])
-print('-------------------- container_relation --------------------')
-updated_container_relation = container_relation_obj[0].copy()
-updated_container_relation['to_containers'].append(biped_sim)
+# biped_sim = con.get_containers(filters={
+#     'project__code': 'lkg',
+#     'code':'simba_kid_biped'
+# })[0]
+# print(biped_sim)
+# container_relation_obj = con.get_container_relation(container[0], child_relation[0])
+# print('-------------------- container_relation --------------------')
+# updated_container_relation = container_relation_obj[0].copy()
+# updated_container_relation['to_containers'].append(biped_sim)
 # pprint(container_relation_obj[0])
 # pprint(updated_container_relation)
 # con.update_container_relation(updated_container_relation)
@@ -170,45 +170,46 @@ updated_container_relation['to_containers'].append(biped_sim)
 
 
 # -------------------------------------------- Bundles --------------------------------------------
-# print('-------------------------------------------- Bundles --------------------------------------------')
+print('-------------------------------------------- Bundles --------------------------------------------')
+sfc_step = con.get_steps(filters={'code': 'sfc'})[0]
 
-# ctr_simba = con.get_containers(filters={
-#     'code':'simba_kid',
-#     'project__code':'lkg'
-# })[0]
-# bundle_type = con.get_bundle_types(filters={'code': 'test'})[0]
+ctr_simba = con.get_containers(filters={
+    'code':'simba_kid',
+    'project__code':'lkg'
+})[0]
+bundle_type = con.get_bundle_types(filters={'code': 'test'})[0]
 
-# model_product = con.get_products(filters={
-#     'container__project__code': 'lkg',
-#     'container__code': 'simba_kid',
-#     'element__code': 'model',
-#     'version':3
-# })[0]
+model_product = con.get_products(filters={
+    'container__project__code': 'lkg',
+    'container__code': 'simba_kid',
+    'element__code': 'model',
+    'version':3
+})[0]
 
-# texture_product = con.get_products(filters={
-#     'container__project__code': 'lkg',
-#     'container__code': 'simba_kid',
-#     'element__code': 'texture',
-#     'version': 2
-# })[0]
-# print(bundle_type)
-# print(texture_product)
-# print(model_product)
-# bundle_obj = con.create_bundle(ctr_simba, bundle_type, [model_product, texture_product])
-# pprint(bundle_obj)
-# texture_product_v1 = con.get_products(filters={
-#     'container__project__code': 'lkg',
-#     'container__code': 'simba_kid',
-#     'element__code': 'texture',
-#     'version': 4
-# })[0]
-# pprint(texture_product_v1)
-# print('------------------------------------ appending --------------------------------')
-# bundle_obj['products'].append(texture_product_v1)
-# # pprint(bundle_obj)
+texture_product = con.get_products(filters={
+    'container__project__code': 'lkg',
+    'container__code': 'simba_kid',
+    'element__code': 'texture',
+    'version': 2
+})[0]
+print(bundle_type)
+print(texture_product)
+print(model_product)
+bundle_obj = con.create_bundle(ctr_simba, sfc_step, bundle_type, [model_product, texture_product])
+pprint(bundle_obj)
+texture_product_v1 = con.get_products(filters={
+    'container__project__code': 'lkg',
+    'container__code': 'simba_kid',
+    'element__code': 'texture',
+    'version': 4
+})[0]
+pprint(texture_product_v1)
+print('------------------------------------ appending --------------------------------')
+bundle_obj['products'].append(texture_product_v1)
+pprint(bundle_obj)
 
-# pprint(bundle_obj)
-# con.update_bundle(bundle_obj)
+pprint(bundle_obj)
+con.update_bundle(bundle_obj)
 
-# all_bundles = con.get_bundles()
-# pprint(all_bundles)
+all_bundles = con.get_bundles()
+pprint(all_bundles)

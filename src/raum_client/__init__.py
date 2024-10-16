@@ -593,13 +593,27 @@ class Client:
         response = self._get(url)
         return response.json()
     
-    # -------------------------------- Product Dependency --------------------------------
+    # -------------------------------- Bundles --------------------------------
 
-    def create_bundle(self, container, bundle_type, products, version=None):
+    def create_bundle(self, container, step, bundle_type, products, version=None):
+        """
+        Creates a new bundle in the system.
+
+        Parameters:
+        container (dict): A dictionary representing the container to which the bundle belongs.
+        step (dict): A dictionary representing the step of the bundle.
+        bundle_type (dict): A dictionary representing the type of the bundle.
+        products (list): A list of dictionaries representing the products included in the bundle.
+        version (str, optional): The version of the bundle. Defaults to None.
+
+        Returns:
+        dict: A dictionary representing the newly created bundle.
+        """
         url = f"{self.base_url}/bundle"
         payload = {
             'container_id': container['id'],
             'bundle_type_id': bundle_type['id'],
+            'step_id': step['id'],
             'products': [i['id'] for i in products]
             }
         if version is not None:
@@ -609,16 +623,38 @@ class Client:
         return response.json()
 
     def update_bundle(self, payload):
+        """
+        Updates an existing bundle in the system.
+
+        Parameters:
+        payload (dict): A dictionary containing the updated bundle details. It should 
+        include the bundle's ID and any other fields that need to be updated.
+
+        Returns:
+        dict: A dictionary representing the updated bundle.
+        """
         url = f"{self.base_url}/bundle/{payload['id']}"
         payload_dict = {}
         payload_dict['id'] = payload['id']
         payload_dict['container_id'] = payload['container']
+        payload_dict['step_id'] = payload['step']
         payload_dict['bundle_type_id'] = payload['bundle_type']
         payload_dict['products'] = [i['id'] for i in payload['products']]
         response = self._patch(url, payload_dict)
         return response.json()
 
     def get_bundles(self, filters=None):
+        """
+        Retrieves a list of bundles based on the provided filters.
+
+        Parameters:
+        filters (dict, optional): A dictionary representing the filters to apply to the bundle 
+        retrieval. Defaults to None, which retrieves all bundles.
+
+        Returns:
+        list: A list of dictionaries, each representing a bundle. If no bundles are found, 
+        it returns an empty list.
+        """
         url = f"{self.base_url}/bundle"
         response = self._get(url, filters)
         return response.json()['items']
