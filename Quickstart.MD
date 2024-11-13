@@ -67,7 +67,7 @@ con.create_container(
 container = con.get_containers(filters={
     'code':'simba_kid',
     'project__code':'lkg'
-})
+}, limit=100, sort='-created_at')
 print(container)
 ```
 
