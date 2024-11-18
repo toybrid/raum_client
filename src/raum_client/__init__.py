@@ -36,6 +36,16 @@ class Client:
     # -------------------------------- Generic --------------------------------
 
     def _get(self, url, filters=None):
+        """
+        Sends a GET request to the specified URL with optional filters.
+
+        Parameters:
+        url (str): The URL to send the GET request to.
+        filters (dict, optional): A dictionary of filters to apply to the request. Defaults to None.
+
+        Returns:
+        requests.Response: The response from the server.
+        """
         if filters is None:
             filters = {
                 "limit": 10,
@@ -49,6 +59,17 @@ class Client:
 
 
     def _post(self, url, payload, params=None):
+        """
+        Sends a POST request to the specified URL with a JSON payload and optional parameters.
+
+        Parameters:
+        url (str): The URL to send the POST request to.
+        payload (dict): A dictionary representing the JSON payload to send with the request.
+        params (dict, optional): A dictionary of parameters to send with the request. Defaults to None.
+
+        Returns:
+        requests.Response: The response from the server.
+        """
         resp = self.session.post(url, json=payload, headers=self.headers, params=params)
         if resp.status_code == 201:
             return resp
@@ -57,6 +78,16 @@ class Client:
 
 
     def _patch(self, url, payload=None):
+        """
+        Sends a PATCH request to the specified URL with a JSON payload.
+
+        Parameters:
+        url (str): The URL to send the PATCH request to.
+        payload (dict, optional): A dictionary representing the JSON payload to send with the request. Defaults to None.
+
+        Returns:
+        requests.Response: The response from the server.
+        """
         resp = self.session.patch(url, json=payload, headers=self.headers)
         if resp.status_code == 200:
             return resp
@@ -138,135 +169,239 @@ class Client:
         response = self.session.post(url, json=payload)
         return response.json()
     
-    def get_users(self, filters=None):
+    def get_users(self, filters=None, sort=['username'], limit=DEFAULT_LIMIT, offset=DEFAULT_OFFSET):
         """
         Retrieves a list of users based on the provided filters.
 
         Parameters:
-        filters (dict, optional): A dictionary of filters to apply to the user retrieval. 
-        Defaults to None, which retrieves all users.
+        filters (dict, optional): A dictionary representing the filters to apply to the user 
+        retrieval. Defaults to None, which retrieves all users.
+        sort (list, optional): A list of strings representing the fields to sort the users by. 
+        Defaults to sorting by 'username'.
+        limit (int, optional): The maximum number of users to retrieve. Defaults to the 
+        value of DEFAULT_LIMIT.
+        offset (int, optional): The number of users to skip before starting to retrieve. 
+        Defaults to 0.
 
         Returns:
         list: A list of dictionaries, each representing a user. If no users are found, 
         it returns an empty list.
         """
+        data = {
+            "filters": filters,
+            "sort": sort
+        }
+        params = {
+            "limit": limit,
+            "offset": offset
+        }
         url = f"{self.base_url}/get-users"
-        response = self._get(url, filters)
+        response = self._post(url, data, params=params)
         return response.json()['items']
     
     # -------------------------------- Core --------------------------------
 
     
-    def get_container_types(self, filters=None):
+    def get_container_types(self, filters=None, sort=DEFAULT_SORT, limit=DEFAULT_LIMIT, offset=DEFAULT_OFFSET):
         """
         Retrieves a list of container types based on the provided filters.
 
         Parameters:
-        filters (dict, optional): A dictionary of filters to apply to the container type 
-        retrieval. Defaults to None, which retrieves all container types.
+        filters (dict, optional): A dictionary representing the filters to apply to the container type retrieval. 
+            Defaults to None, which retrieves all container types.
+        sort (list, optional): A list of fields to sort the container types by. Defaults to DEFAULT_SORT.
+        limit (int, optional): The maximum number of container types to retrieve. Defaults to DEFAULT_LIMIT.
+        offset (int, optional): The number of container types to skip before starting to retrieve. Defaults to DEFAULT_OFFSET.
 
         Returns:
-        list: A list of dictionaries, each representing a container type. If no container 
-        types are found, it returns an empty list.
+        list: A list of dictionaries, each representing a container type. If no container types are found, 
+            it returns an empty list.
         """
+        data = {
+            "filters": filters,
+            "sort": sort
+        }
+        params = {
+            "limit": limit,
+            "offset": offset
+        }
         url = f"{self.base_url}/container-type"
-        response = self._get(url, filters)
+        response = self._post(url, data, params=params)
         return response.json()['items']
     
-    def get_relation_types(self, filters=None):
+    def get_relation_types(self, filters=None, sort=DEFAULT_SORT, limit=DEFAULT_LIMIT, offset=DEFAULT_OFFSET):
         """
         Retrieves a list of relation types based on the provided filters.
 
         Parameters:
-        filters (dict, optional): A dictionary of filters to apply to the relation type 
+        filters (dict, optional): A dictionary representing the filters to apply to the relation type 
         retrieval. Defaults to None, which retrieves all relation types.
 
         Returns:
-        list: A list of dictionaries, each representing a relation type. If no relation 
-        types are found, it returns an empty list.
+        list: A list of dictionaries, each representing a relation type. If no relation types are found, 
+        it returns an empty list.
         """
+        data = {
+            "filters": filters,
+            "sort": sort
+        }
+        params = {
+            "limit": limit,
+            "offset": offset
+        }
+
         url = f"{self.base_url}/relation-type"
-        response = self._get(url, filters)
+        response = self._post(url, data, params=params)
         return response.json()['items']
+
     
-    def get_elements(self, filters=None):
+    def get_elements(self, filters=None, sort=DEFAULT_SORT, limit=DEFAULT_LIMIT, offset=DEFAULT_OFFSET):
         """
         Retrieves a list of elements based on the provided filters.
 
         Parameters:
-        filters (dict, optional): A dictionary of filters to apply to the element retrieval. 
-        Defaults to None, which retrieves all elements.
+        filters (dict, optional): A dictionary representing the filters to apply to the element 
+        retrieval. Defaults to None, which retrieves all elements.
+        sort (list, optional): A list of fields to sort the elements by. Defaults to DEFAULT_SORT.
+        limit (int, optional): The maximum number of elements to retrieve. Defaults to DEFAULT_LIMIT.
+        offset (int, optional): The number of elements to skip before starting to retrieve. 
+        Defaults to DEFAULT_OFFSET.
 
         Returns:
         list: A list of dictionaries, each representing an element. If no elements are found, 
         it returns an empty list.
         """
+        data = {
+            "filters": filters,
+            "sort": sort
+        }
+        params = {
+            "limit": limit,
+            "offset": offset
+        }
+
         url = f"{self.base_url}/element"
-        response = self._get(url, filters)
+        response = self._post(url, data, params=params)
         return response.json()['items']
     
-    def get_data_types(self, filters=None):
+    def get_data_types(self, filters=None, sort=DEFAULT_SORT, limit=DEFAULT_LIMIT, offset=DEFAULT_OFFSET):
         """
         Retrieves a list of data types based on the provided filters.
 
         Parameters:
-        filters (dict, optional): A dictionary of filters to apply to the data type retrieval. 
-        Defaults to None, which retrieves all data types.
+        filters (dict, optional): A dictionary representing the filters to apply to the data type 
+        retrieval. Defaults to None, which retrieves all data types.
+        sort (list, optional): A list of fields to sort the data types by. Defaults to DEFAULT_SORT.
+        limit (int, optional): The maximum number of data types to retrieve. Defaults to DEFAULT_LIMIT.
+        offset (int, optional): The number of data types to skip before starting to retrieve. 
+        Defaults to DEFAULT_OFFSET.
 
         Returns:
         list: A list of dictionaries, each representing a data type. If no data types are found, 
         it returns an empty list.
         """
+        data = {
+            "filters": filters,
+            "sort": sort
+        }
+        params = {
+            "limit": limit,
+            "offset": offset
+        }
+
         url = f"{self.base_url}/data-type"
-        response = self._get(url, filters)
+        response = self._post(url, data, params=params)
         return response.json()['items']
     
-    def get_steps(self, filters=None):
+    def get_steps(self, filters=None, sort=DEFAULT_SORT, limit=DEFAULT_LIMIT, offset=DEFAULT_OFFSET):
         """
         Retrieves a list of steps based on the provided filters.
 
         Parameters:
-        filters (dict, optional): A dictionary of filters to apply to the step retrieval. 
+        filters (dict, optional): A dictionary representing the filters to apply to the step retrieval. 
         Defaults to None, which retrieves all steps.
+        sort (list, optional): A list of fields to sort the steps by. Defaults to DEFAULT_SORT.
+        limit (int, optional): The maximum number of steps to retrieve. Defaults to DEFAULT_LIMIT.
+        offset (int, optional): The number of steps to skip before starting to retrieve. Defaults to DEFAULT_OFFSET.
 
         Returns:
-        list: A list of dictionaries, each representing a step. If no steps are found, 
-        it returns an empty list.
+        list: A list of dictionaries, each representing a step. If no steps are found, it returns an empty list.
         """
+        data = {
+            "filters": filters,
+            "sort": sort
+        }
+        params = {
+            "limit": limit,
+            "offset": offset
+        }
+
         url = f"{self.base_url}/step"
-        response = self._get(url, filters)
+        response = self._post(url, data, params=params)
         return response.json()['items']
     
-    def get_statuses(self, filters=None):
+    def get_statuses(self, filters=None, sort=DEFAULT_SORT, limit=DEFAULT_LIMIT, offset=DEFAULT_OFFSET):
         """
         Retrieves a list of statuses based on the provided filters.
 
         Parameters:
-        filters (dict, optional): A dictionary of filters to apply to the status retrieval. 
-        Defaults to None, which retrieves all statuses.
+        filters (dict, optional): A dictionary representing the filters to apply to the status 
+        retrieval. Defaults to None, which retrieves all statuses.
+
+        sort (list, optional): A list of fields to sort the statuses by. Defaults to DEFAULT_SORT.
+
+        limit (int, optional): The maximum number of statuses to retrieve. Defaults to DEFAULT_LIMIT.
+
+        offset (int, optional): The number of statuses to skip before starting to retrieve. 
+        Defaults to DEFAULT_OFFSET.
 
         Returns:
         list: A list of dictionaries, each representing a status. If no statuses are found, 
         it returns an empty list.
         """
+        data = {
+            "filters": filters,
+            "sort": sort
+        }
+        params = {
+            "limit": limit,
+            "offset": offset
+        }
+
         url = f"{self.base_url}/status"
-        response = self._get(url, filters)
+        response = self._post(url, data, params=params)
         return response.json()['items']
     
-    def get_bundle_types(self, filters=None):
+    def get_bundle_types(self, filters=None, sort=DEFAULT_SORT, limit=DEFAULT_LIMIT, offset=DEFAULT_OFFSET):
         """
         Retrieves a list of bundle types based on the provided filters.
 
         Parameters:
-        filters (dict, optional): A dictionary of filters to apply to the bundle type 
+        filters (dict, optional): A dictionary representing the filters to apply to the bundle type 
         retrieval. Defaults to None, which retrieves all bundle types.
 
+        sort (list, optional): A list of fields to sort the bundle types by. Defaults to DEFAULT_SORT.
+
+        limit (int, optional): The maximum number of bundle types to retrieve. Defaults to DEFAULT_LIMIT.
+
+        offset (int, optional): The number of bundle types to skip before starting to retrieve. 
+        Defaults to DEFAULT_OFFSET.
+
         Returns:
-        list: A list of dictionaries, each representing a bundle type. If no bundle 
-        types are found, it returns an empty list.
+        list: A list of dictionaries, each representing a bundle type. If no bundle types are found, 
+        it returns an empty list.
         """
+        data = {
+            "filters": filters,
+            "sort": sort
+        }
+        params = {
+            "limit": limit,
+            "offset": offset
+        }
+
         url = f"{self.base_url}/bundle-type"
-        response = self._get(url, filters)
+        response = self._post(url, data, params=params)
         return response.json()['items']
     
     # -------------------------------- Project --------------------------------
@@ -316,12 +451,19 @@ class Client:
         Retrieves a list of projects based on the provided filters.
 
         Parameters:
-        filters (dict, optional): A dictionary of filters to apply to the project 
+        filters (dict, optional): A dictionary representing the filters to apply to the project 
         retrieval. Defaults to None, which retrieves all projects.
 
+        sort (list, optional): A list of fields to sort the projects by. Defaults to DEFAULT_SORT.
+
+        limit (int, optional): The maximum number of projects to retrieve. Defaults to DEFAULT_LIMIT.
+
+        offset (int, optional): The number of projects to skip before starting to retrieve. 
+        Defaults to DEFAULT_OFFSET.
+
         Returns:
-        list: A list of project dictionaries. Each dictionary contains the details of 
-        a single project. If no projects are found, it returns an empty list.
+        list: A list of dictionaries, each representing a project. If no projects are found, 
+        it returns an empty list.
         """
         data = {
             "filters": filters,
@@ -390,6 +532,13 @@ class Client:
         Parameters:
         filters (dict, optional): A dictionary representing the filters to apply to the container 
         retrieval. Defaults to None, which retrieves all containers.
+
+        sort (list, optional): A list of fields to sort the containers by. Defaults to DEFAULT_SORT.
+
+        limit (int, optional): The maximum number of containers to retrieve. Defaults to DEFAULT_LIMIT.
+
+        offset (int, optional): The number of containers to skip before starting to retrieve. 
+        Defaults to DEFAULT_OFFSET.
 
         Returns:
         list: A list of dictionaries, each representing a container. If no containers are found, 
@@ -552,6 +701,13 @@ class Client:
         filters (dict, optional): A dictionary representing the filters to apply to the product 
         retrieval. Defaults to None, which retrieves all products.
 
+        sort (list, optional): A list of fields to sort the products by. Defaults to DEFAULT_SORT.
+
+        limit (int, optional): The maximum number of products to retrieve. Defaults to DEFAULT_LIMIT.
+
+        offset (int, optional): The number of products to skip before starting to retrieve. 
+        Defaults to DEFAULT_OFFSET.
+
         Returns:
         list: A list of dictionaries, each representing a product. If no products are found, 
         it returns an empty list.
@@ -678,6 +834,13 @@ class Client:
         Parameters:
         filters (dict, optional): A dictionary representing the filters to apply to the bundle 
         retrieval. Defaults to None, which retrieves all bundles.
+
+        sort (list, optional): A list of fields to sort the bundles by. Defaults to DEFAULT_SORT.
+
+        limit (int, optional): The maximum number of bundles to retrieve. Defaults to DEFAULT_LIMIT.
+
+        offset (int, optional): The number of bundles to skip before starting to retrieve. 
+        Defaults to DEFAULT_OFFSET.
 
         Returns:
         list: A list of dictionaries, each representing a bundle. If no bundles are found, 
