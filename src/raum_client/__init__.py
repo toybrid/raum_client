@@ -17,8 +17,9 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE TEXT OR THE USE OR OTHER DEALINGS
 '''
 import requests
 import os
-from raum_client import utils
 import getpass
+from raum_client import utils
+from raum_client.contants import DEFAULT_LIMIT, DEFAULT_OFFSET, DEFAULT_SORT
 
 class Client:
     def __init__(self):
@@ -47,8 +48,8 @@ class Client:
             raise ValueError(resp.text)
 
 
-    def _post(self, url, payload):
-        resp = self.session.post(url, json=payload, headers=self.headers)
+    def _post(self, url, payload, params=None):
+        resp = self.session.post(url, json=payload, headers=self.headers, params=params)
         if resp.status_code == 201:
             return resp
         else:
@@ -310,7 +311,7 @@ class Client:
         response = self._patch(url, payload=payload)
         return response
 
-    def get_projects(self, filters=None):
+    def get_projects(self, filters=None, sort=DEFAULT_SORT, limit=DEFAULT_LIMIT, offset=DEFAULT_OFFSET):
         """
         Retrieves a list of projects based on the provided filters.
 
@@ -322,8 +323,16 @@ class Client:
         list: A list of project dictionaries. Each dictionary contains the details of 
         a single project. If no projects are found, it returns an empty list.
         """
-        url = f"{self.base_url}/project"
-        response = self._get(url, filters)
+        data = {
+            "filters": filters,
+            "sort": sort
+        }
+        params = {
+            "limit": limit,
+            "offset": offset
+        }
+        url = f"{self.base_url}/project-search"
+        response = self._post(url, data, params=params)
         return response.json()['items']
 
     # -------------------------------- Container --------------------------------
@@ -374,7 +383,7 @@ class Client:
         response = self._patch(url, payload)
         return response.json()
 
-    def get_containers(self, filters=None):
+    def get_containers(self, filters=None, sort=DEFAULT_SORT, limit=DEFAULT_LIMIT, offset=DEFAULT_OFFSET):
         """
         Retrieves a list of containers based on the provided filters.
 
@@ -386,8 +395,16 @@ class Client:
         list: A list of dictionaries, each representing a container. If no containers are found, 
         it returns an empty list.
         """
-        url = f"{self.base_url}/container"
-        response = self._get(url, filters)
+        data = {
+            "filters": filters,
+            "sort": sort
+        }
+        params = {
+            "limit": limit,
+            "offset": offset
+        }
+        url = f"{self.base_url}/container-search"
+        response = self._post(url, data, params=params)
         return response.json()['items']
     
     # -------------------------------- Container Relation --------------------------------
@@ -408,11 +425,14 @@ class Client:
         Returns:
         dict: A dictionary representing the newly created container relation.
         """
+        print("----------- Create Container Relation !!-----------------")
+        print(container_list)
         payload = {
             'from_container_id': container['id'],
             'relation_type_id': relation_type['id'],
             'to_containers': [i['id'] for i  in container_list]
         }
+        print(payload)
         url = f"{self.base_url}/container-relation"
         response = self._post(url, payload)
         return response.json()
@@ -524,7 +544,7 @@ class Client:
         response = self._patch(url, payload)
         return response.json()
 
-    def get_products(self, filters=None):
+    def get_products(self, filters=None, sort=DEFAULT_SORT, limit=DEFAULT_LIMIT, offset=DEFAULT_OFFSET):
         """
         Retrieves a list of products based on the provided filters.
 
@@ -536,8 +556,16 @@ class Client:
         list: A list of dictionaries, each representing a product. If no products are found, 
         it returns an empty list.
         """
-        url = f"{self.base_url}/product"
-        response = self._get(url, filters)
+        data = {
+            "filters": filters,
+            "sort": sort
+        }
+        params = {
+            "limit": limit,
+            "offset": offset
+        }
+        url = f"{self.base_url}/product-search"
+        response = self._post(url, data, params=params)
         return response.json()['items']
     
     def set_status(self, product, status):
@@ -643,7 +671,7 @@ class Client:
         response = self._patch(url, payload_dict)
         return response.json()
 
-    def get_bundles(self, filters=None):
+    def get_bundles(self, filters=None, sort=DEFAULT_SORT, limit=DEFAULT_LIMIT, offset=DEFAULT_OFFSET):
         """
         Retrieves a list of bundles based on the provided filters.
 
@@ -655,6 +683,14 @@ class Client:
         list: A list of dictionaries, each representing a bundle. If no bundles are found, 
         it returns an empty list.
         """
-        url = f"{self.base_url}/bundle"
-        response = self._get(url, filters)
+        data = {
+            "filters": filters,
+            "sort": sort
+        }
+        params = {
+            "limit": limit,
+            "offset": offset
+        }
+        url = f"{self.base_url}/bundle-search"
+        response = self._post(url, data, params=params)
         return response.json()['items']

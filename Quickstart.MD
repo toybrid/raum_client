@@ -67,7 +67,7 @@ con.create_container(
 container = con.get_containers(filters={
     'code':'simba_kid',
     'project__code':'lkg'
-})
+}, limit=100, sort='-created_at')
 print(container)
 ```
 
@@ -239,7 +239,9 @@ texture_product = con.get_products(filters={
     'version': 2
 })[0]
 
-bundle_obj = con.create_bundle(ctr_simba, bundle_type, [model_product, texture_product])
+sfc_step = con.get_steps(filters={'code': 'sfc'})[0]
+
+bundle_obj = con.create_bundle(ctr_simba, sfc_step, bundle_type, [model_product, texture_product])
 ```
 ### Update Bundle
 ```python
