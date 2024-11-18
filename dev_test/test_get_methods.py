@@ -8,16 +8,12 @@ from raum_client import Client
 
 
 con = Client()
-# print(con.get_users(filters={'id': 9}))
 
-# -------------------------------------------- User Auth --------------------------------------------
-# print('Register User')
-# user_created = con.create_account()
-# print(user_created)
-# pprint(con.get_users())
-# sys.exit(0)
+print('--------------------------------------------- Users --------------------------------------------')
 # con.login()
+pprint(con.get_users())
 # -------------------------------------------- Core --------------------------------------------
+print('--------------------------------------------- Core --------------------------------------------')
 pprint(con.get_container_types())
 pprint(con.get_statuses())
 pprint(con.get_elements())
@@ -25,35 +21,27 @@ pprint(con.get_data_types())
 pprint(con.get_relation_types())
 pprint(con.get_bundle_types())
 pprint(con.get_steps())
-# # -------------------------------------------- Project --------------------------------------------
 
-# project = con.create_project('lbug', 'Lady Bug', 'DSNY002')
-# projects = con.get_projects(filters={
-#     'code': 'lbug'
-# })
-# print(projects)
-# updated_project = projects[0].copy()
-# updated_project['label'] = 'arjun updated'
-
-# con.update_project(updated_project)
-
-# # # # -------------------------------------------- Container --------------------------------------------
-# char_container_type = con.get_container_types(filters={'code':'chr'})
-# print(projects)
-# print(char_container_type)
-# # con.create_container(projects[0], char_container_type[0], 'lady_bug', 'LadyBug', frame_range={'cut_in':'1001', 'cut_out':'1100'})
-# # con.create_container(projects[0], char_container_type[0], 'lady_bug_dirt', 'LadyBugDirt', frame_range={'cut_in':'1001', 'cut_out':'1100'})
-# # con.create_container(projects[0], char_container_type[0], 'lady_bug_dirt2', 'LadyBugDirt2', frame_range={'cut_in':'1001', 'cut_out':'1100'})
-
-# container = con.get_containers(limit=2000)
-# products = con.get_products(limit=2000)
-# bundles = con.get_bundles(limit=10)
-# pprint(bundles)
-# for i_bun in bundles:
-#     print(i_bun['slug'])
-#     bundle_prodcuts = con.get_products(filters={'id__in': i_bun['products']})
-#     pprint('------- products----')
-#     pprint(bundle_prodcuts)
+print('--------------------------------------------- Project --------------------------------------------')
+projects = con.get_projects(filters={
+    'code': 'lbug'
+})
+pprint(projects)
+projects = con.get_projects()
+pprint(projects)
+print('--------------------------------------------- Containers --------------------------------------------')
+pprint(con.get_containers())
+pprint(con.get_containers(limit=2000))
+print('--------------------------------------------- Products --------------------------------------------')
+pprint(con.get_products(limit=2000))
+print('--------------------------------------------- Bundles --------------------------------------------')
+bundles = con.get_bundles()
+pprint(bundles)
+for i_bun in bundles:
+    pprint('------- bundle products----')
+    print(i_bun['slug'])
+    bundle_prodcuts = con.get_products(filters={'id__in': i_bun['products']})
+    pprint(bundle_prodcuts)
 # pprint(container)
 # pprint(products)
 # updated_container = container[0].copy()

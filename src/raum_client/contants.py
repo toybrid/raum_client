@@ -1,3 +1,3 @@
 DEFAULT_LIMIT = 10
 DEFAULT_OFFSET = 0
-DEFAULT_SORT = '-created_at'
+DEFAULT_SORT = ['-created_at']
