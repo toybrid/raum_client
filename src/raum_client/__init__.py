@@ -36,6 +36,16 @@ class Client:
     # -------------------------------- Generic --------------------------------
 
     def _get(self, url, filters=None):
+        """
+        Sends a GET request to the specified URL with optional filters.
+
+        Parameters:
+        url (str): The URL to send the GET request to.
+        filters (dict, optional): A dictionary of filters to apply to the request. Defaults to None.
+
+        Returns:
+        requests.Response: The response from the server.
+        """
         if filters is None:
             filters = {
                 "limit": 10,
@@ -49,6 +59,17 @@ class Client:
 
 
     def _post(self, url, payload, params=None):
+        """
+        Sends a POST request to the specified URL with a JSON payload and optional parameters.
+
+        Parameters:
+        url (str): The URL to send the POST request to.
+        payload (dict): A dictionary representing the JSON payload to send with the request.
+        params (dict, optional): A dictionary of parameters to send with the request. Defaults to None.
+
+        Returns:
+        requests.Response: The response from the server.
+        """
         resp = self.session.post(url, json=payload, headers=self.headers, params=params)
         if resp.status_code == 201:
             return resp
@@ -57,6 +78,16 @@ class Client:
 
 
     def _patch(self, url, payload=None):
+        """
+        Sends a PATCH request to the specified URL with a JSON payload.
+
+        Parameters:
+        url (str): The URL to send the PATCH request to.
+        payload (dict, optional): A dictionary representing the JSON payload to send with the request. Defaults to None.
+
+        Returns:
+        requests.Response: The response from the server.
+        """
         resp = self.session.patch(url, json=payload, headers=self.headers)
         if resp.status_code == 200:
             return resp
