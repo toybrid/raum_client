@@ -5,148 +5,169 @@
 from pprint import pprint
 from raum_client import Client
 
+
+TEST_NUMBER = 1
+
 con = Client()
 ```
 ## Authentication
 ```python
-# user_created = con.create_account()
+user_created = con.create_account()
 con.login()
 ```
 ## Project
-### Create a new project
+### Create project
 ```python
-project = con.create_project('lkg', 'LionKing', 'DSNY001')
-projects = con.get_projects(filters={
-    'code': 'lkg'
-})
+# Define parameters
+
+project_code = f'lbug_{TEST_NUMBER}'
+project_label = f'Lady Bug {TEST_NUMBER}'
+project_client_name = f'DSNY002 {TEST_NUMBER}'
+
+# Creating project
+project = con.create_project(project_code, project_label, project_client_name)
 ```
-### Find a project
+### Find project
 ```python
-projects = con.get_projects(filters={
-    'code': 'lkg'
-})
-print(projects)
+# Get all projects 
+con.get_projects()
+
+# Get filtered projects
+con.get_projects(filters={'code': project_code})
 ```
-### Update Project
+### Update project
 ```python
-updated_project = projects[0].copy()
-updated_project['label'] = 'arjun updated'
-con.update_project(updated_project)
+# Get an existing project and alter values in the dict and pass to update command
+copied_project = project.copy()
+copied_project['label'] = 'BINGO project label update'
+
+updated_project = con.update_project(copied_project)
 ```
 
 ## Container
-### Create  new container
+### Create container
 ```python
-char_container_type = con.get_container_types(filters={'code':'chr'})
-print(char_container_type)
+# Defining some asset names
 
-con.create_container(
-    projects[0], 
-    char_container_type[0], 
-    'simba_kid', 
-    'SimbaKid',
-    frame_range={'cut_in':'1001', 'cut_out':'1100'}
-    )
-con.create_container(
-    projects[0],
-    char_container_type[0],
-    'simba_kid_dirt',
-    'SimbaKidDirt',
-    frame_range={'cut_in':'1001', 'cut_out':'1100'}
-    )
-con.create_container(
-    projects[0],
-    char_container_type[0],
-    'simba_kid_dirt2',
-    'SimbaKidDirt2',
-    frame_range={'cut_in':'1001', 'cut_out':'1100'}
-    )
+main_asset_code = f'lady_bug_main_{TEST_NUMBER}'
+main_asset_client_name = f'Lady Bug Main {TEST_NUMBER}'
+dirt_asset_code = f'lady_bug_dirt_{TEST_NUMBER}'
+dirt_asset_client_name = f'Lady Bug Dirt {TEST_NUMBER}'
+messy_asset_code = f'lady_bug_messy_{TEST_NUMBER}'
+messy_asset_client_name = f'Lady Bug Messy {TEST_NUMBER}'
+biped_asset_code = f'lady_bug_biped_{TEST_NUMBER}'
+biped_asset_client_name = f'Lady Bug Biped {TEST_NUMBER}'
+
+# Getting a container type
+char_container_type = con.get_container_types(filters={'code':'chr'})[0]
+
+# Creating multiple containers
+main_asset_container = con.create_container(
+                                            project, 
+                                            char_container_type, 
+                                            main_asset_code, 
+                                            main_asset_client_name, 
+                                            frame_range={'cut_in':'1001', 'cut_out':'1100'}
+                                            )
+dirt_asset_container = con.create_container(
+                                            project, 
+                                            char_container_type,
+                                            dirt_asset_code,
+                                            dirt_asset_client_name,
+                                            frame_range={'cut_in':'1001', 'cut_out':'1100'}
+                                            )
+messy_asset_container = con.create_container(
+                                            project,
+                                            char_container_type,
+                                            messy_asset_code, messy_asset_client_name, 
+                                            frame_range={'cut_in':'1001', 'cut_out':'1100'})
+biped_asset_container = con.create_container(
+                                            project,
+                                            char_container_type,
+                                            biped_asset_code,
+                                            biped_asset_client_name,
+                                            frame_range={'cut_in':'1001', 'cut_out':'1100'}
+                                            )
 ```
-### Get containers
+### Find container
 ```python
-container = con.get_containers(filters={
-    'code':'simba_kid',
-    'project__code':'lkg'
-}, limit=100, sort='-created_at')
-print(container)
+# Get all container, results are paginated
+con.get_containers()
+
+# Get filtered containers
+con.get_containers(filters={'code': main_asset_code})
 ```
 
-### Update Container
+### Update container
 ```python
-updated_container = container[0].copy()
+updated_container = main_asset_container.copy()
 updated_container['client_name'] = 'updated_client_name'
 con.update_container(updated_container)
 ```
 
 ## Container Relationship
-## Create Relationship
+### Create relationship
 ```python
-simb_vars = con.get_containers(filters={
-    'code__contains': 'simba_kid_',
-    'project__code':'lkg'
-})
-child_relation = con.get_relation_types(filters={
-    'code': 'chld'
-})
-container_relation_obj = con.create_container_relation(
-    container=container[0],
-    relation_type=child_relation[0],
-    container_list = simb_vars
-    )
-con.create_container(
-    projects[0],
-    char_container_type[0],
-    'simba_kid_biped',
-    'SimbaKidBiped',
-    frame_range={'cut_in':'1001', 'cut_out':'1100'}
-    )
+# Get relationship type
+child_relation = con.get_relation_types(filters={'code': 'chld'})[0]
+
+# Create relationship
+container_relation_obj = con.create_container_relation(main_asset_container,
+                                                        child_relation,
+                                                        [dirt_asset_container, messy_asset_container]
+                                                    )
 ```
-
-### Update Relationship
+### Find containter relationship
 ```python
-biped_sim = con.get_containers(filters={
-    'project__code': 'lkg',
-    'code':'simba_kid_biped'
-})[0]
-
-container_relation_obj = con.get_container_relation(container[0], child_relation[0])
-
-updated_container_relation = container_relation_obj[0].copy()
-updated_container_relation['to_containers'].append(biped_sim)
-con.update_container_relation(updated_container_relation)
+ctr_relationship = con.get_container_relation(main_asset_container, child_relation)
+```
+### Update container rßelationship
+```python
+ctr_relation_copy = container_relation_obj.copy()
+ctr_relation_copy['to_containers'].append(biped_asset_container)
+container_relation_updated = con.update_container_relation(ctr_relation_copy)
 ```
 ## Products
-### Create Products
 ```python
 #  demo import
 import random
-```
-```python
+
 mdl_elem = con.get_elements(filters={'code': 'model'})[0]
 geom_dt = con.get_data_types(filters={'code': 'geo'})[0]
 mdl_step = con.get_steps(filters={'code': 'mdl'})[0]
+tex_elem = con.get_elements(filters={'code': 'texture'})[0]
+img_dt = con.get_data_types(filters={'code': 'img'})[0]
+sfc_step = con.get_steps(filters={'code': 'sfc'})[0]
+look_elem = con.get_elements(filters={'code': 'look'})[0]
+mat_dt = con.get_data_types(filters={'code': 'mat'})[0]
+sfc_step = con.get_steps(filters={'code': 'sfc'})[0]
+bundle_type = con.get_bundle_types(filters={'code': 'test'})[0]
+```
+### Create Products
+- Some arguments are option, preferably we would like to have all arguments for better data
+- combination of container, step, element, data_type, layer and lod makes a new version
+```python
+# Model product creation
 model_prod = con.create_product(
-                    container[0],
-                    mdl_step,
-                    mdl_elem,
-                    geom_dt,
-                    '500',
-                    'default',
-                    task='model',
-                    extension='usd',
-)
+                        main_asset_container,
+                        mdl_step,
+                        mdl_elem,
+                        geom_dt,
+                        '500',
+                        'default',
+                        task='model',
+                        extension='usd',
+                        )
 version_num = model_prod.get('version')
 updated_path = f'F:/myprpoject/fdsf/dfsdf/df/{random.randint(0, 1000)}/myfile_{version_num}.usd'
 updated_prod = model_prod.copy()
 updated_prod['filepath'] = updated_path
-con.update_product(updated_prod)
-```
-```python
-tex_elem = con.get_elements(filters={'code': 'texture'})[0]
-img_dt = con.get_data_types(filters={'code': 'img'})[0]
-sfc_step = con.get_steps(filters={'code': 'sfc'})[0]
+model_product = con.update_product(updated_prod)
+
+
+# Texture product creation
 texture_prod = con.create_product(
-                    container[0],
+                    main_asset_container,
                     sfc_step,
                     tex_elem,
                     img_dt,
@@ -159,14 +180,12 @@ version_num = texture_prod.get('version')
 updated_path = f'F:/myprpoject/fdsf/dfsdf/df/{random.randint(0, 1000)}/myfile_{version_num}.usd'
 updated_prod = texture_prod.copy()
 updated_prod['filepath'] = updated_path
-con.update_product(updated_prod)
-```
-```python
-look_elem = con.get_elements(filters={'code': 'look'})[0]
-mat_dt = con.get_data_types(filters={'code': 'mat'})[0]
-sfc_step = con.get_steps(filters={'code': 'sfc'})[0]
+texture_product = con.update_product(updated_prod)
+
+
+# Look product creation
 look_prod = con.create_product(
-                    container[0],
+                    main_asset_container,
                     sfc_step,
                     look_elem,
                     mat_dt,
@@ -179,26 +198,29 @@ version_num = look_prod.get('version')
 updated_path = f'F:/myprpoject/fdsf/dfsdf/df/{random.randint(0, 1000)}/myfile_{version_num}.usd'
 updated_prod = look_prod.copy()
 updated_prod['filepath'] = updated_path
-con.update_product(updated_prod)
+look_product = con.update_product(updated_prod)
 ```
-### Get Prooduct
+### Find prooduct
 ```python
-look_products = con.get_products(filters={
-    'container__project__code': 'lkg',
-    'container__code': 'simba_kid',
-    'element__code': 'look',
+# Get all products
+all_products = con.get_products()
+
+# Filter for specific stream of product
+filtered_products = con.get_products(filters={
+    'container__project__code': project_code,
+    'container__code': main_asset_container,
+    'element__code': 'texture',
 })
-print(look_products)
 ```
 ## Product Dependency
 ```python
+# Get different products
 look_product = con.get_products(filters={
     'container__project__code': 'lkg',
     'container__code': 'simba_kid',
     'element__code': 'look',
     'version': version_num
 })[0]
-print(look_product)
 
 model_product = con.get_products(filters={
     'container__project__code': 'lkg',
@@ -212,51 +234,35 @@ texture_product = con.get_products(filters={
     'element__code': 'texture',
     'version': 2
 })[0]
-print(look_product)
+
+# Creating a dependency where look file has both model and texture as inputs
 con.create_product_dependency(look_product, [model_product['filepath'], texture_product['filepath']])
 ```
 ## Bundle
-### Create Bundle
+### Create bundle
+- combination of container, step, bundle_type makes a new version
 ```python
-ctr_simba = con.get_containers(filters={
-    'code':'simba_kid',
-    'project__code':'lkg'
-})[0]
-
-bundle_type = con.get_bundle_types(filters={'code': 'test'})[0]
-
-model_product = con.get_products(filters={
-    'container__project__code': 'lkg',
-    'container__code': 'simba_kid',
-    'element__code': 'model',
-    'version':3
-})[0]
-
-texture_product = con.get_products(filters={
-    'container__project__code': 'lkg',
-    'container__code': 'simba_kid',
-    'element__code': 'texture',
-    'version': 2
-})[0]
-
-sfc_step = con.get_steps(filters={'code': 'sfc'})[0]
-
-bundle_obj = con.create_bundle(ctr_simba, sfc_step, bundle_type, [model_product, texture_product])
+bundle_obj = con.create_bundle(
+                            main_asset_container,
+                            sfc_step,
+                            bundle_type, 
+                            [model_product, texture_product]
+                            )
 ```
-### Update Bundle
+### Update bundle
 ```python
-texture_product_v1 = con.get_products(filters={
-    'container__project__code': 'lkg',
-    'container__code': 'simba_kid',
-    'element__code': 'texture',
-    'version': 4
-})[0]
-bundle_obj['products'].append(texture_product_v1)
+bundle_obj['products'].append(look_product['id'])
+con.update_bundle(bundle_obj)
 ```
 ### Get Bundle
 ```python
-all_bundles = con.get_bundles()
-pprint(all_bundles)
+# Get all bundles
+bundles = con.get_bundles()
+
+# Get products from a bundles
+for item in bundles:
+    bundle_products = con.get_products(filters={'id__in': item['products']})
+    print(bundle_products)
 ```
 
 # Filters Keywords
