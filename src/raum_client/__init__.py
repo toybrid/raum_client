@@ -18,6 +18,7 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE TEXT OR THE USE OR OTHER DEALINGS
 import requests
 import os
 import getpass
+from pprint import pprint
 from raum_client import utils
 from raum_client.contants import DEFAULT_LIMIT, DEFAULT_OFFSET, DEFAULT_SORT
 
@@ -89,6 +90,7 @@ class Client:
         requests.Response: The response from the server.
         """
         resp = self.session.patch(url, json=payload, headers=self.headers)
+        # print(f"Response: {resp.text}")
         if resp.status_code == 200:
             return resp
         else:
@@ -427,7 +429,7 @@ class Client:
         }
         url = f"{self.base_url}/project"
         response = self._post(url, payload)
-        return response
+        return response.json()
 
     def update_project(self, payload):
         """
@@ -444,7 +446,8 @@ class Client:
         """
         url = f"{self.base_url}/project/{payload['id']}"
         response = self._patch(url, payload=payload)
-        return response
+        # print(response)
+        return response.json()
 
     def get_projects(self, filters=None, sort=DEFAULT_SORT, limit=DEFAULT_LIMIT, offset=DEFAULT_OFFSET):
         """
@@ -574,14 +577,11 @@ class Client:
         Returns:
         dict: A dictionary representing the newly created container relation.
         """
-        print("----------- Create Container Relation !!-----------------")
-        print(container_list)
         payload = {
             'from_container_id': container['id'],
             'relation_type_id': relation_type['id'],
             'to_containers': [i['id'] for i  in container_list]
         }
-        print(payload)
         url = f"{self.base_url}/container-relation"
         response = self._post(url, payload)
         return response.json()
@@ -821,9 +821,9 @@ class Client:
         payload_dict = {}
         payload_dict['id'] = payload['id']
         payload_dict['container_id'] = payload['container']
-        payload_dict['step_id'] = payload['step']
-        payload_dict['bundle_type_id'] = payload['bundle_type']
-        payload_dict['products'] = [i['id'] for i in payload['products']]
+        payload_dict['step_id'] = payload['step']['id']
+        payload_dict['bundle_type_id'] = payload['bundle_type']['id']
+        payload_dict['products'] = payload['products']
         response = self._patch(url, payload_dict)
         return response.json()
 
