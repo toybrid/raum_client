@@ -23,11 +23,14 @@ from raum_client import utils
 from raum_client.contants import DEFAULT_LIMIT, DEFAULT_OFFSET, DEFAULT_SORT
 
 class Client:
-    def __init__(self):
+    def __init__(self, host_url=None, port=None):
         self.base_url = os.getenv(
                                 'RAUM_SERVER_BASE_URL', 
                                 'http://localhost:8000/api/v1'
                                 )
+        if host_url and port:
+            self.base_url = f"http://{host_url}:{port}/api/v1"
+
         self.session = requests.Session()
         self.headers = {"Content-Type": "application/json"}
         auth_token = utils.get_access_token()
@@ -739,6 +742,21 @@ class Client:
         response = self._patch(url)
         return response.json()
     
+    def set_product_status(self, product, status):
+        """
+        Updates the status of an existing product in the system.
+
+        Parameters:
+        product (dict): A dictionary representing the product to update.
+        status (str): The new status of the product.
+
+        Returns:
+        dict: A dictionary representing the updated product.
+        """
+        url = f"{self.base_url}/product/{product['id']}/{status}"
+        response = self._patch(url)
+        return response.json()
+    
     
     # -------------------------------- Product Dependency --------------------------------
     def create_product_dependency(self,
@@ -779,7 +797,7 @@ class Client:
     
     # -------------------------------- Bundles --------------------------------
 
-    def create_bundle(self, container, step, bundle_type, products, version=None):
+    def create_bundle(self, container, step, bundle_type, products, version=None, description=None):
         """
         Creates a new bundle in the system.
 
@@ -803,6 +821,10 @@ class Client:
         if version is not None:
             payload['version'] = version
 
+        if description is not None:
+            payload['description'] = description
+
+
         response = self._post(url, payload)
         return response.json()
 
@@ -824,6 +846,7 @@ class Client:
         payload_dict['step_id'] = payload['step']['id']
         payload_dict['bundle_type_id'] = payload['bundle_type']['id']
         payload_dict['products'] = payload['products']
+        payload_dict['description'] = payload['description']
         response = self._patch(url, payload_dict)
         return response.json()
 
@@ -857,3 +880,8 @@ class Client:
         url = f"{self.base_url}/bundle-search"
         response = self._post(url, data, params=params)
         return response.json()['items']
+    
+    def set_bundle_status(self, bundle, status):
+        url = f"{self.base_url}/bundle/{bundle['id']}/{status}"
+        response = self._patch(url)
+        return response.json()
