@@ -246,13 +246,19 @@ bundle_obj = con.create_bundle(
                             main_asset_container,
                             sfc_step,
                             bundle_type, 
-                            [model_product, texture_product]
+                            [model_product, texture_product],
+                            description = 'This is my comment'
                             )
 ```
 ### Update bundle
 ```python
 bundle_obj['products'].append(look_product['id'])
+bundle_obj['description'] = 'Updated my comment'
 con.update_bundle(bundle_obj)
+```
+### Set Bundle Status
+```
+con.set_bundle_status(bundle_obj, 'shop')
 ```
 ### Get Bundle
 ```python
