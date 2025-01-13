@@ -633,11 +633,11 @@ class Client:
                        data_type,
                        lod,
                        layer,
+                       extension,
                        version=None,
                        frame_range={},
                        filepath=None,
                        task='',
-                       extension='',
                        metadata={}):
         """
         Creates a new product in the system.

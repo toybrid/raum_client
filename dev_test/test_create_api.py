@@ -6,7 +6,7 @@ import random
 
 from raum_client import Client
 
-TEST_NUMBER = 4
+TEST_NUMBER = 3
 
 
 con = Client()
@@ -45,7 +45,7 @@ messy_asset_client_name = f'Lady Bug Messy {TEST_NUMBER}'
 biped_asset_code = f'lady_bug_biped_{TEST_NUMBER}'
 biped_asset_client_name = f'Lady Bug Biped {TEST_NUMBER}'
 
-char_container_type = con.get_container_types(filters={'code':'chr'})
+char_container_type = con.get_container_types(filters={'code':'char'})
 
 print(f'Creating container: {main_asset_code}')
 main_asset_container = con.create_container(project, char_container_type[0], main_asset_code, main_asset_client_name, frame_range={'cut_in':'1001', 'cut_out':'1100'})
@@ -89,9 +89,9 @@ con.get_container_relation(main_asset_container, child_relation)
 print('-------------------------------------------- Products --------------------------------------------')
 
 mdl_elem = con.get_elements(filters={'code': 'model'})[0]
-geom_dt = con.get_data_types(filters={'code': 'geo'})[0]
+geom_dt = con.get_data_types(filters={'code': 'geom'})[0]
 mdl_step = con.get_steps(filters={'code': 'mdl'})[0]
-tex_elem = con.get_elements(filters={'code': 'texture'})[0]
+tex_elem = con.get_elements(filters={'code': 'tex'})[0]
 img_dt = con.get_data_types(filters={'code': 'img'})[0]
 sfc_step = con.get_steps(filters={'code': 'sfc'})[0]
 look_elem = con.get_elements(filters={'code': 'look'})[0]
