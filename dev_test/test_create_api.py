@@ -6,7 +6,7 @@ import random
 
 from raum_client import Client
 
-TEST_NUMBER = 0
+TEST_NUMBER = 3
 
 
 con = Client()
@@ -99,6 +99,8 @@ mat_dt = con.get_data_types(filters={'code': 'mat'})[0]
 sfc_step = con.get_steps(filters={'code': 'sfc'})[0]
 bundle_type = con.get_bundle_types(filters={'code': 'test'})[0]
 
+custom_version = 0
+
 for i in range(10):
     print(f'Creating model product: {i}')
 
@@ -165,10 +167,22 @@ for i in range(10):
     print('--------------------------- Bundles ---------------------------')
 
     print(f'Creating Bundle {i}')
-    bundle_obj = con.create_bundle(main_asset_container, sfc_step, bundle_type, [model_product, texture_product])
+    bundle_obj = con.create_bundle(main_asset_container, sfc_step, bundle_type, [model_product, texture_product], description=f'Test Model {i}')
     print(f'Updating Bundle {i}')
     bundle_obj['products'].append(look_product['id'])
+    bundle_obj['description'] = f'Updated bundle description'
     con.update_bundle(bundle_obj)
+    print('--------------------------- Bundles with custom version ---------------------------')
+
+    custom_version += +i+50
+
+    print(f'Creating Bundle {custom_version}')
+    bundle_custom_versioning = con.create_bundle(main_asset_container, sfc_step, bundle_type, [model_product, texture_product], version=custom_version,  description='Custom version')
+    print(f'Updating Bundle {custom_version}')
+    bundle_custom_versioning['products'].append(look_product['id'])
+    con.update_bundle(bundle_custom_versioning)
+    if i % 2 == 0:
+        con.set_bundle_status(bundle_custom_versioning, 'shop')
     print(f'**************************************************************************')
 
 print(f'Fetching all products')
