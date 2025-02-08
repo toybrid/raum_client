@@ -35,6 +35,7 @@ class Client:
         self.headers = {"Content-Type": "application/json"}
         auth_token = utils.get_access_token()
         if auth_token:
+            os.environ['RAUM_AUTH_ACCESS_TOKEN'] = auth_token
             self.headers['Authorization'] = f"Bearer {auth_token}"
 
     # -------------------------------- Generic --------------------------------
