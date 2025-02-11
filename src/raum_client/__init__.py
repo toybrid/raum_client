@@ -35,6 +35,7 @@ class Client:
         self.headers = {"Content-Type": "application/json"}
         auth_token = utils.get_access_token()
         if auth_token:
+            os.environ['RAUM_AUTH_ACCESS_TOKEN'] = auth_token
             self.headers['Authorization'] = f"Bearer {auth_token}"
 
     # -------------------------------- Generic --------------------------------
@@ -173,6 +174,18 @@ class Client:
         }
         response = self.session.post(url, json=payload)
         return response.json()
+    
+    def is_authorised(self):
+        """
+        Checks if the user is authorised to access the API.
+
+        Returns:
+        bool: True if the user is authorised, False otherwise.
+        """
+        url = f"{self.base_url}/is-authorised"
+        response = self._get(url)
+        return response.json()
+
     
     def get_users(self, filters=None, sort=['username'], limit=DEFAULT_LIMIT, offset=DEFAULT_OFFSET):
         """

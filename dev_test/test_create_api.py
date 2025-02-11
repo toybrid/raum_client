@@ -10,7 +10,7 @@ TEST_NUMBER = 3
 
 
 con = Client()
-
+# con.login()
 # user_created = con.create_account()
 
 print('-------------------------------------------- Project --------------------------------------------')
@@ -183,6 +183,8 @@ for i in range(10):
     con.update_bundle(bundle_custom_versioning)
     if i % 2 == 0:
         con.set_bundle_status(bundle_custom_versioning, 'shop')
+    else:
+        con.set_bundle_status(bundle_custom_versioning, 'appr')
     print(f'**************************************************************************')
 
 print(f'Fetching all products')
@@ -198,10 +200,14 @@ texture_product_v1 = con.get_products(filters={
 })
 
 print(f'Fetching filtered bundles --> Related Products')
-all_bundles = con.get_bundles(filters={'container__code': 'lady_bug_main_1'})
+all_bundles = con.get_bundles(filters={'container__code': f'lady_bug_main_{TEST_NUMBER}'})
 
 for bundle in all_bundles:
     print(f'Bundle Slug: {bundle["slug"]}')
+    print(f'Bundle status: {bundle["status"]}')
+    print(f'Bundle apprpoved at: {bundle["approved_at"]}')
     products = con.get_products(filters={'id__in': bundle['products']})
     for product in products:
         print(f'    Product Slut: {product["slug"]}')
+        print(f'    Product status: {product["status"]}')
+        print(f'    Product approved at {product["approved_at"]}')
