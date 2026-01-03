@@ -15,17 +15,20 @@ client = Client()
 # model_element = client.search("Element", fields=['code'], filters={'code': 'model'})[0]
 # rig_element = client.search("Element", fields=['code'], filters={'code': 'rig'})[0]
 # wrk_element = client.search("Element", fields=['code'], filters={'code': 'wrk'})[0]
+# light_element = client.search("Element", fields=['code'], filters={'code': 'light'})[0]
 
 # ver_bundle = client.search("BundleType", fields=['code'], filters={'code': 'version'})[0]
+
+# default_status = client.search("Status", fields=['code'], filters={'code': 'registered'})[0]
 
 # print(ctr_type_char)
 # print(model_element)
 # print(rig_element)
 
 
-# # # #  Creating a project and a character
+# # # # #  Creating a project and a character
 # project = client.create("Project", {'code': f'lkg', 'label': f'Lion King', 'client_name': 'DSNY'})
-# # pprint(project)
+# pprint(project)
 # simba_char = client.create("Container", {
 #                             'code': f'simba',
 #                             'client_name': f'babyLion',
@@ -33,7 +36,7 @@ client = Client()
 #                             'container_type_id': ctr_type_char['id'],
 #                             'frame_range': {'cut_in': 1001, 'cut_out': 1200},
 #                         })
-# # pprint(simba_char)
+# pprint(simba_char)
 # # # Creating a model product for the character
 # for i in range(1, 500):
 #     simba_model_product = client.create("Product", {
@@ -81,40 +84,56 @@ client = Client()
 #     updated_rig_simba = client.update('Product',
 #                   simba_rig_product['id'],
 #                   fields={'filepath': f"/projects/lkg/characters/simba/{rig_element['code']}/simba_{rig_element['code']}_v{i}.fbx"})
-    
-    # client.create("Bundle", 
-    #               fields={
-    #                   "continer_id": simba_char['id'],
-    #                   "products_id": [simba_model_product['id'], simba_rig_product['id'], simba_model_workfile_product['id']],
-    #                   "bundle_type_id": ver_bundle['id'],
-    #                   "task": "model",
-    #                   "description": f"Bundle for simba model v{i}"
-    #               })
 
-# client.create_bundle('Bundle', fields ={
-#     'container_id': '7',
-#     'task': 'model',
-#     'bundle_type_id': '1',
-#     'products': ['10','11','12']
+
+# simba_char = client.search("Container", fields=['code'], filters={'code': 'simba'})[0]
+
+# light_product = client.create("Product", {
+#     'container_id': simba_char['id'],
+#     'element_id': light_element['id'],
+#     'variant': 'default',
+#     'component': 'light_task',
+#     'layer': 'default',
+#     'extension': 'fbx',
+#     'description': f'My simple comments',
+#     'status_id': default_status['id']
 # })
 
-# bundles = client.search_bundle({"container_id":4}, limit=5)
+# client.create_bundle(fields ={
+#     'container_id': simba_char['id'],
+#     'package': 'model_publish',
+#     'bundle_type_id': '1',
+#     'products': ['2996','4487','4491']
+# })
+
+# bundles = client.search_bundle({"container_id":simba_char['id']}, limit=5)
 # for i in bundles:
 #     print('*******************************')
 #     pprint(i)
 #     print('-------------------------------')
 
 
-client.create_product_dependency(
-    fields = {
-        "product_id": "2015",
-        "inputs": ["1991","1994", "1997"]
-    }
-)
+# client.create_product_dependency(
+#     fields = {
+#         "product_id": "2996",
+#         "inputs": ['4487','4491']
+#     }
+# )
 
-pprint(client.get_product_dependency('2015'))
+# pprint(client.get_product_dependency('2996'))
 
 # pds = client.search("Product", fields=["filepath", "container"], limit=500)
-
 # pprint(pds)
 # print(len(pds))
+
+# Approving a product
+# client.set_status(
+#     product_ids=["1499"],
+#     status_code='approved'
+# )
+
+# ctr_type_char =  client.search("ContainerType", fields=['code'], filters={'code': 'char'})[0]
+
+# Get latest approved product
+latest_approved = client.search("Product", fields=['id', 'filepath', 'status', 'version', "approved_at"], filters={'status__code': 'approved'},sort=['-approved_at'], limit=1)
+print("Latest approved product:", latest_approved)

@@ -32,6 +32,7 @@ class Client:
 
         self.session = requests.Session()
         self.headers = {"Content-Type": "application/json"}
+        self.username = getpass.getuser()
 
     def _get(self, url, filters):
         """
@@ -101,11 +102,10 @@ class Client:
         Notes:
             Automatically adds 'created_by' and 'updated_by' fields using the current user.
         """
-        user = getpass.getuser()
 
         default_fields = {
-            "created_by": user,
-            "updated_by": user,
+            "created_by": self.username,
+            "updated_by": self.username,
         }
         payload = {
             "entity": entity,
@@ -161,7 +161,7 @@ class Client:
             dict: The JSON response from the server after updating the entity.
         """
         default_fields = {
-            "updated_by": getpass.getuser(),
+            "updated_by": self.username,
         }
         payload = {
             "entity": entity,
@@ -211,8 +211,8 @@ class Client:
         user = getpass.getuser()
 
         default_fields = {
-            "created_by": user,
-            "updated_by": user,
+            "created_by": self.username,
+            "updated_by": self.username,
         }
         payload = {
             "entity": "Bundle",
@@ -263,11 +263,9 @@ class Client:
         Returns:
             dict: The JSON response from the API after creating the ProductDependency.
         """
-        user = getpass.getuser()
-
         default_fields = {
-            "created_by": user,
-            "updated_by": user,
+            "created_by": self.username,
+            "updated_by": self.username,
         }
         payload = {
             "entity": "ProductDependency",
@@ -294,3 +292,24 @@ class Client:
         response = self._get(url, {})
         results = response.json()
         return results
+    
+    def set_status(self, product_ids: List, status_code: str):
+        """
+        Sets the status of a specified entity.
+
+        Args:
+            entity (str): The name of the entity whose status is to be set.
+            uid (str): The unique identifier of the entity.
+            status_code (str): The status code to set for the entity.
+
+        Returns:
+            dict: The JSON response from the server after setting the status.
+        """
+        payload = {
+            "product_ids": product_ids,
+            "status": status_code,
+            "username": self.username,
+        }
+        url = f"{self.base_url}/set-status"
+        response = self._patch(url, payload)
+        return response.json()
