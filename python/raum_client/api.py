@@ -15,9 +15,10 @@ AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABL
 ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, 
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE TEXT OR THE USE OR OTHER DEALINGS IN THE TEXT.
 '''
+from dataclasses import fields
 import os
 import getpass
-from typing import List
+from typing import List, Dict
 import requests
 from raum_client.constants import DEFAULT_LIMIT, DEFAULT_OFFSET, DEFAULT_SORT
 
@@ -312,4 +313,69 @@ class Client:
         }
         url = f"{self.base_url}/set-status"
         response = self._patch(url, payload)
+        return response.json()
+    
+    def create_container_relationship(self, fields: Dict):
+        """
+        Creates a new ContainerRelationship entity with the specified fields.
+
+        This method constructs a payload with the provided fields, along with
+        default 'created_by' and 'updated_by' fields set to the current user,
+        and sends a POST request to the backend API to create the entity.
+
+        Args:
+            fields (dict): A dictionary of fields to set on the ContainerRelationship entity.
+
+        Returns:
+            dict: The JSON response from the API after creating the ContainerRelationship.
+        """
+        default_fields = {
+            "created_by": self.username,
+            "updated_by": self.username,
+        }
+        payload = {**default_fields, **fields}
+        
+        url = f"{self.base_url}/container-relation"
+        response = self._post(url, payload)
+        return response.json()
+    
+    def update_container_relationship(self, container_relation_id: str, fields: Dict):
+        """
+        Updates an existing ContainerRelationship entity with the specified fields.
+
+        This method constructs a payload with the provided fields, along with
+        a default 'updated_by' field set to the current user, and sends a PATCH
+        request to the backend API to update the entity.
+
+        Args:
+            uid (str): The unique identifier of the ContainerRelationship entity to update.
+            fields (dict): A dictionary of fields to update on the ContainerRelationship entity.
+
+        Returns:
+            dict: The JSON response from the API after updating the ContainerRelationship.
+        """
+        default_fields = {
+            "updated_by": self.username,
+        }
+        payload = {**default_fields, **fields}
+
+        url = f"{self.base_url}/container-relation/{container_relation_id}"
+        response = self._patch(url, payload)
+        return response.json()
+    
+    def get_container_relationship(self, container_id: str, relation_type_id: str):
+        """
+        Retrieves a ContainerRelationship entity by its unique identifier.
+
+        This method sends a GET request to the backend API to fetch the details
+        of a ContainerRelationship entity based on the provided unique identifier.
+
+        Args:
+            container_relation_id (str): The unique identifier of the ContainerRelationship entity to retrieve.
+
+        Returns:
+            dict: The JSON response from the API containing the details of the ContainerRelationship.
+        """
+        url = f"{self.base_url}/container-relation/{container_id}/{relation_type_id}"
+        response = self._get(url, {})
         return response.json()

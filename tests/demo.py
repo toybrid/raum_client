@@ -135,5 +135,34 @@ client = Client()
 # ctr_type_char =  client.search("ContainerType", fields=['code'], filters={'code': 'char'})[0]
 
 # Get latest approved product
-latest_approved = client.search("Product", fields=['id', 'filepath', 'status', 'version', "approved_at"], filters={'status__code': 'approved'},sort=['-approved_at'], limit=1)
-print("Latest approved product:", latest_approved)
+# latest_approved = client.search("Product", fields=['id', 'filepath', 'status', 'version', "approved_at"], filters={'status__code': 'approved'},sort=['-approved_at'], limit=1)
+# print("Latest approved product:", latest_approved)
+
+# relation_type = client.search("RelationType", fields=['code'], filters={'code': 'child'})[0]
+
+# from_container = client.search("Container", fields=['id', 'code'], filters={'code': 'sq555'})[0]
+# to_container_a = client.search("Container", fields=['id', 'code'], filters={'code': 'sq555_sh0010'})[0]
+# to_container_b = client.search("Container", fields=['id', 'code'], filters={'code': 'sq555_sh0020'})[0]
+
+# print("From Container:", from_container)
+# print("To Container A:", to_container_a)
+# print("To Container B:", to_container_b)
+
+# relationship_fileds = {
+#     "from_container_id": from_container['id'],
+#     "to_containers": [to_container_a['id']],
+#     "relation_type_id": relation_type['id'],
+# }
+# client.create_container_relationship(relationship_fileds)
+
+# fields = {
+#     "to_containers": [6,7],
+# }
+
+# client.update_container_relationship(
+#     5,
+#     fields
+# )
+
+print(client.get_container_relationship(5, 1))
+print(client.get_container_relationship(1, 2))
